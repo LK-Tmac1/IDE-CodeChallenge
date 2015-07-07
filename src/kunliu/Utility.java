@@ -4,21 +4,31 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
 public class Utility {
+
+	/**
+	 * Validate the arguments number.
+	 * 
+	 * @param args
+	 * @return true if two arguments.
+	 */
+	public static boolean validateArgument(String[] args) {
+		if (args != null && args.length == 2 && !args[0].isEmpty()
+				&& !args[1].isEmpty()) {
+			return true;
+		}
+		System.err.println("Invalid argument, input and output path expected.");
+		return false;
+	}
 
 	public static Map<String, Integer> wordCountMap = new HashMap<String, Integer>();
 
@@ -31,7 +41,8 @@ public class Utility {
 		return null;
 	}
 
-	public static void parseWordCountInput(String inputPath) {
+	public static void procedureWordCountInput(String inputPath,
+			String outputPath) {
 		if (inputPath != null) {
 			File file = new File(inputPath);
 			Scanner input = null;

@@ -128,12 +128,8 @@ public class RunningMedian {
 	}
 
 	public static void main(String args[]) {
-		RunningMedian rm = new RunningMedian();
-		for (int i = 0; i < 10; i++) {
-			rm.encounterNew(i);
-			System.out.println("Insert " + i);
-			System.out.println("Current Median: " + rm.getCurrentMedian());
-			System.out.println("==============");
+		if (Utility.validateArgument(args)) {
+			Utility.procedureRunMed(args[0], args[1]);
 		}
 	}
 }

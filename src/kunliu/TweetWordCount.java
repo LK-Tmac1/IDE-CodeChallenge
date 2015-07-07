@@ -26,4 +26,10 @@ public class TweetWordCount {
 		this.count = count;
 	}
 
+	public static void main(String args[]) {
+		if (Utility.validateArgument(args)) {
+			Utility.procedureWordCountInput(args[0], args[1]);
+		}
+	}
+
 }
