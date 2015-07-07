@@ -9,7 +9,9 @@ import java.util.PriorityQueue;
  * An object that encapsulates necessary data structures and operations for
  * calculating running median of a sequence of input values.
  * <p>
- * 
+ * The idea is to use two priority queues, i.e. a max heap and an min heap to
+ * store the elements smaller and larger than the current median value
+ * respectively.
  * 
  * @author Kun
  */
@@ -45,7 +47,7 @@ public class RunningMedian {
 	 * Use one max heap for the left side of the median, and one min heap for
 	 * the right side of the median.
 	 * <p>
-	 * When a new value is inserted, update the two heaps by corresponding
+	 * When a new value is encountered, update the two heaps by corresponding
 	 * rules: <br>
 	 * 1. Ensure the difference in size of the two heaps is no larger than 1. <br>
 	 * 2. Insert the new value to the correct side, i.e. if val > median then
@@ -57,9 +59,9 @@ public class RunningMedian {
 	 * O(n), assuming that there are n elements in the two heaps in total.
 	 * 
 	 * @param val
-	 *            The new value to be inserted.
+	 *            The new value encountered.
 	 */
-	public void insertNew(float val) {
+	public void encounterNew(float val) {
 		if (rightMinHeap.size() == leftMaxHeap.size()) {
 			if (val > median) {
 				rightMinHeap.add(val);
@@ -99,11 +101,10 @@ public class RunningMedian {
 	public static void main(String args[]) {
 		RunningMedian rm = new RunningMedian();
 		for (int i = 0; i < 101; i++) {
-			rm.insertNew(i);
+			rm.encounterNew(i);
 			System.out.println("Insert " + i);
 			System.out.println("Current Median: " + rm.getCurrentMedian());
 			System.out.println("==============");
 		}
-		System.out.println(Utility.formatMedianString(2.0f));
 	}
 }

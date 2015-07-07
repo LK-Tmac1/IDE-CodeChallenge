@@ -48,6 +48,10 @@ public class Utility {
 			}
 		}
 	}
+	
+	public static void parseRunningMedianInput(String inputPath){
+		
+	}
 
 	public static int getUniqueWordCount(String tweet) {
 		Set<String> wordSet = new HashSet<String>();
@@ -59,11 +63,7 @@ public class Utility {
 		return wordSet.size();
 	}
 
-	public static void addRunningMedian(List<Integer> medList, int val) {
-
-	}
-
-	public static String formatMedianString(float median) {
+	public static String formatFloatString(float median) {
 		// If 2.0, return 2, else if 2.1, return 2.1
 		if ((int) (median * 10) / 10 != median) {
 			return "" + median;
