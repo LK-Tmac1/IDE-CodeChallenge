@@ -22,18 +22,43 @@ public class RunningMedian {
 	private PriorityQueue<Float> rightMinHeap;
 	private PriorityQueue<Float> leftMaxHeap;
 	private List<Float> medianList;
+	private final boolean saveSpace;
 
+	/**
+	 * A comparator interface implementation that compare two values in
+	 * descending order.
+	 * 
+	 * @author Kun
+	 *
+	 */
 	class DescendCmptor implements Comparator<Float> {
 		public int compare(Float x, Float y) {
 			return (int) (y - x);
 		}
 	}
 
+	/**
+	 * Default constructor for a RunningMedian object. The saveSpace flag is set
+	 * to true.
+	 */
 	public RunningMedian() {
+		this(true);
+	}
+
+	/**
+	 * The saveSpace is a flag that indicates if the historical running median
+	 * should be recorded or not.
+	 * 
+	 * @param saveSpace
+	 *            If true then the list will be null otherwise will be used to
+	 *            store historical running median values.
+	 */
+	public RunningMedian(boolean saveSpace) {
 		median = Integer.MIN_VALUE;
 		rightMinHeap = new PriorityQueue<Float>(CAPACITY);
 		leftMaxHeap = new PriorityQueue<Float>(CAPACITY, new DescendCmptor());
 		medianList = new LinkedList<Float>();
+		this.saveSpace = saveSpace;
 	}
 
 	/**
@@ -88,19 +113,23 @@ public class RunningMedian {
 			}
 			median = (rightMinHeap.peek() + leftMaxHeap.peek()) / 2;
 		}
-		medianList.add(median);
+		if (!saveSpace) {
+			medianList.add(median);
+		}
 	}
 
 	/**
+	 * If save space mode is enabled, then will return null object for the list.
+	 * 
 	 * @return A list that contains all the running median so far.
 	 */
 	public List<Float> getMedianList() {
-		return this.medianList;
+		return saveSpace ? null : this.medianList;
 	}
 
 	public static void main(String args[]) {
 		RunningMedian rm = new RunningMedian();
-		for (int i = 0; i < 101; i++) {
+		for (int i = 0; i < 10; i++) {
 			rm.encounterNew(i);
 			System.out.println("Insert " + i);
 			System.out.println("Current Median: " + rm.getCurrentMedian());
