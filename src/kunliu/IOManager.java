@@ -65,7 +65,7 @@ public class IOManager {
 			bfw = new BufferedWriter(new FileWriter(outputPath));
 			isWriterOpen = true;
 		} catch (FileNotFoundException e) {
-			String parentDir = Utility.parentDirPath(outputPath);
+			String parentDir = new File(outputPath).getParent();
 			final File parent = new File(parentDir);
 			if (!parent.mkdirs()) {
 				System.err.println("File " + outputPath + " does not exist");
@@ -105,10 +105,10 @@ public class IOManager {
 			File dir = new File(fileDir);
 			if (dir.exists() && dir.isDirectory()) {
 				for (File file : dir.listFiles()) {
-					file.delete();
+					deleteDirectory(file.getAbsolutePath());
 				}
-				dir.delete();
 			}
+			dir.delete();
 		}
 	}
 

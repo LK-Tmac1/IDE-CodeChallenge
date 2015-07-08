@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /*
@@ -25,13 +26,18 @@ public class TweetWordCount {
 
 	public String dumpWordCountMap() {
 		StringBuilder sb = new StringBuilder();
-		Iterator<String> iter = wordCountMap.keySet().iterator();
+		Iterator<Entry<String, Integer>> iter = wordCountMap.entrySet()
+				.iterator();
 		while (iter.hasNext()) {
-			String key = iter.next();
-			sb.append(key + IOManager.WC_DELIMITER + wordCountMap.get(key)
-					+ IOManager.LINE_SEPARATOR);
+			Entry<String, Integer> entry = iter.next();
+			sb.append(entry.getKey() + IOManager.WC_DELIMITER
+					+ entry.getValue() + IOManager.LINE_SEPARATOR);
 		}
 		return sb.toString();
+	}
+
+	public void clearMap() {
+		this.wordCountMap.clear();
 	}
 
 	public void addWordCount(String word, int count) {
@@ -71,20 +77,47 @@ public class TweetWordCount {
 	}
 
 	public static boolean procedureWordCount(String inputPath, String outputPath) {
-		String tempDir = splitInputToHashFiles(inputPath);
-
-		// IOManager.deleteDirectory(tempDir);
+		String tempSplitDir = splitInputToHashFiles(inputPath);
+		String tempSortGroupDir = sortGroupWordDirectory(tempSplitDir);
+		IOManager.deleteDirectory(new File(tempSplitDir).getParent());
 		return true;
 	}
 
+	private static String sortGroupWordDirectory(String dirPath) {
+		File path = new File(dirPath);
+		if (path.exists()) {
+			if (path.isDirectory()) {
+				String tempDir = path.getParent() + File.separator
+						+ "sortgroup" + File.separator;
+				IOManager ioM = new IOManager();
+				TweetWordCount wc = new TweetWordCount();
+				for (File file : path.listFiles()) {
+					ioM.openBufferedReader(file.getAbsolutePath());
+					String line;
+					while ((line = ioM.readNextLine()) != null) {
+						wc.updateWordCountByOne(line.trim());
+					}
+					ioM.closeBufferedReader();
+					ioM.openBufferedWriter(tempDir + file.getName());
+					ioM.writeOutput(wc.dumpWordCountMap());
+					ioM.closeBufferedWriter();
+					wc.clearMap();
+				}
+				return tempDir;
+			}
+		}
+		return null;
+	}
+
 	private static String splitInputToHashFiles(String inputPath) {
-		IOManager bfrw = new IOManager();
-		bfrw.openBufferedReader(inputPath);
-		String tempDir = Utility.parentDirPath(inputPath) + File.separator
-				+ "temp_" + System.currentTimeMillis() + File.separator;
+		IOManager ioM = new IOManager();
+		ioM.openBufferedReader(inputPath);
+		String tempDir = new File(inputPath).getParent() + File.separator
+				+ "temp" + System.currentTimeMillis() + File.separator
+				+ "split" + File.separator;
 		String line;
 		IOManager[] bfwArray = new IOManager[MAX_HASHFILE];
-		while ((line = bfrw.readNextLine()) != null) {
+		while ((line = ioM.readNextLine()) != null) {
 			if (!line.trim().isEmpty()) {
 				String[] wordArray = Utility.splitTweet(line);
 				for (String word : wordArray) {
@@ -95,7 +128,6 @@ public class TweetWordCount {
 						bfwArray[hashFile].openBufferedWriter(tempDir
 								+ hashFile + ".txt");
 					}
-					System.out.println(hashFile + ", " + word);
 					bfwArray[hashFile].writeOutput(word
 							+ IOManager.LINE_SEPARATOR);
 				}

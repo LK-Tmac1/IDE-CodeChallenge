@@ -1,6 +1,5 @@
 package kunliu;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,20 +33,6 @@ public class Utility {
 	public static String[] splitTweet(String tweet) {
 		if (tweet != null) {
 			return tweet.split(IOManager.TWEET_DELIMITER);
-		}
-		return null;
-	}
-
-	/**
-	 * Given a file path, return its parent directory.
-	 * 
-	 * @param filePath
-	 * @return parent directory of the file, if existed.
-	 */
-	public static String parentDirPath(String filePath) {
-		if (filePath != null && !filePath.trim().isEmpty()) {
-			int index = filePath.lastIndexOf(File.separator);
-			return index > -1 ? filePath.substring(0, index) : null;
 		}
 		return null;
 	}
