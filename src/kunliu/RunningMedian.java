@@ -118,7 +118,7 @@ public class RunningMedian {
 	public static void main(String args[]) {
 		args = new String[2];
 		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_input/tweets.txt";
-		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/ft1.txt";
+		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/ft2.txt";
 
 		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
 				.getInstance().getTime()));

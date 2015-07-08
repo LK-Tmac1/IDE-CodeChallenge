@@ -3,10 +3,11 @@ package kunliu;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.TreeMap;
 
 /*
@@ -16,18 +17,18 @@ import java.util.TreeMap;
  */
 public class TweetWordCount {
 
-	public static final int MAX_HASHFILE = 10;
+	public static final int MAX_WORD = 1000;
+	public static final int MAX_HASHFILE = 100;
 
-	private TreeMap<String, Integer> wordCountMap;
+	private TreeMap<String, Integer> wcMap;
 
 	public TweetWordCount() {
-		this.wordCountMap = new TreeMap<String, Integer>();
+		this.wcMap = new TreeMap<String, Integer>();
 	}
 
 	public String dumpWordCountMap() {
 		StringBuilder sb = new StringBuilder();
-		Iterator<Entry<String, Integer>> iter = wordCountMap.entrySet()
-				.iterator();
+		Iterator<Entry<String, Integer>> iter = wcMap.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<String, Integer> entry = iter.next();
 			sb.append(entry.getKey() + IOManager.WC_DELIMITER
@@ -37,49 +38,81 @@ public class TweetWordCount {
 	}
 
 	public void clearMap() {
-		this.wordCountMap.clear();
+		this.wcMap.clear();
 	}
 
-	public void addWordCount(String word, int count) {
+	public void updateWordCount(String word, int count) {
 		if (word != null) {
-			this.wordCountMap.put(word, count);
+			int c = wcMap.containsKey(word) ? wcMap.get(word) + count : count;
+			wcMap.put(word, c);
 		}
 	}
 
 	public void updateWordCountByOne(String word) {
-		int c = wordCountMap.containsKey(word) ? wordCountMap.get(word) + 1 : 1;
-		wordCountMap.put(word, c);
+		updateWordCount(word, 1);
 	}
 
-	public boolean isMapFull() {
-		return this.wordCountMap.size() < MAX_HASHFILE;
-	}
-
-	public static boolean procedureWordCountNaive(String inputPath,
-			String outputPath) {
+	public static boolean procedureWordCountNaive(String input, String output) {
 		IOManager bfrw = new IOManager();
-		bfrw.openBufferedReader(inputPath);
+		bfrw.openBufferedReader(input);
 		TweetWordCount wc = new TweetWordCount();
 		String line;
 		while ((line = bfrw.readNextLine()) != null) {
 			if (!line.trim().isEmpty()) {
-				String[] wordArray = Utility.splitTweet(line);
-				for (String word : wordArray) {
+				for (String word : Utility.splitTweet(line)) {
 					wc.updateWordCountByOne(word);
 				}
 			}
 		}
 		bfrw.closeBufferedReader();
-		bfrw.openBufferedWriter(outputPath);
+		bfrw.openBufferedWriter(output);
 		bfrw.writeOutput(wc.dumpWordCountMap());
 		bfrw.closeBufferedWriter();
 		return true;
 	}
 
-	public static boolean procedureWordCount(String inputPath, String outputPath) {
-		String tempSplitDir = splitInputToHashFiles(inputPath);
+	public static boolean procedureWordCountDist(String input, String output) {
+		String tempSplitDir = splitInputToHashFiles(input);
 		String tempSortGroupDir = sortGroupWordDirectory(tempSplitDir);
-		IOManager.deleteDirectory(new File(tempSplitDir).getParent());
+		if (mergeWordCount(tempSortGroupDir, output)) {
+			IOManager.deleteDirectory(new File(tempSplitDir).getParent());
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean mergeWordCount(String mergePath, String output) {
+		File mergeDir = new File(mergePath);
+		if (mergeDir.isDirectory()) {
+			File[] allFile = mergeDir.listFiles();
+			IOManager[] readerArray = new IOManager[allFile.length];
+			PriorityQueue<String> mergeQ = new PriorityQueue<String>(
+					allFile.length);
+			Map<String, Integer> lineFileMap = new HashMap<String, Integer>();
+			for (int i = 0; i < allFile.length; i++) {
+				readerArray[i] = new IOManager();
+				readerArray[i].openBufferedReader(allFile[i].getAbsolutePath());
+				String line = readerArray[i].readNextLine();
+				lineFileMap.put(line, i);
+				mergeQ.add(line);
+			}
+			IOManager writer = new IOManager();
+			writer.openBufferedWriter(output);
+			while (mergeQ.size() > 0) {
+				String line = mergeQ.remove();
+				writer.writeOutput(line + IOManager.LINE_SEPARATOR);
+				int fileIndex = lineFileMap.get(line);
+				lineFileMap.remove(line);
+				String newline = readerArray[fileIndex].readNextLine();
+				if (newline != null) {
+					mergeQ.add(newline);
+					lineFileMap.put(newline, fileIndex);
+				} else {
+					readerArray[fileIndex].closeBufferedReader();
+				}
+			}
+			writer.closeBufferedWriter();
+		}
 		return true;
 	}
 
@@ -119,11 +152,9 @@ public class TweetWordCount {
 		IOManager[] bfwArray = new IOManager[MAX_HASHFILE];
 		while ((line = ioM.readNextLine()) != null) {
 			if (!line.trim().isEmpty()) {
-				String[] wordArray = Utility.splitTweet(line);
-				for (String word : wordArray) {
+				for (String word : Utility.splitTweet(line)) {
 					int hashFile = Math.abs(word.hashCode()) % MAX_HASHFILE;
-					if (bfwArray[hashFile] == null
-							|| !bfwArray[hashFile].isWriterOpen()) {
+					if (bfwArray[hashFile] == null) {
 						bfwArray[hashFile] = new IOManager();
 						bfwArray[hashFile].openBufferedWriter(tempDir
 								+ hashFile + ".txt");
@@ -145,11 +176,11 @@ public class TweetWordCount {
 		args = new String[2];
 		String parDir = "/Users/Kun/Git/IDE-CodeChallenge/";
 		args[0] = parDir + "tweet_input/tweets.txt";
-		args[1] = parDir + "tweet_output/2.txt";
+		args[1] = parDir + "tweet_output/ft1.txt";
 		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
 				.getInstance().getTime()));
 		if (Utility.validateArgument(args)
-				&& procedureWordCount(args[0], args[1])) {
+				&& procedureWordCountDist(args[0], args[1])) {
 			System.out.println("Word count calaulated successfully.");
 		}
 		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar

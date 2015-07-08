@@ -4,12 +4,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A general purpose helper class.
+ * A general purpose helper class. Contains predefined constants.
  * 
  * @author Kun
  *
  */
 public class Utility {
+
+	public static final String LINE_SEPARATOR = System
+			.getProperty("line.separator");
+	public static final String TWEET_DELIMITER = " ";
+	public static final String WC_DELIMITER = "\t";
+	
+	
 
 	/**
 	 * Validate the arguments number.
