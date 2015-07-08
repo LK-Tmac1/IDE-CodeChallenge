@@ -34,6 +34,10 @@ public class Utility {
 
 	public static final String TWEET_DELIMITER = " ";
 
+	/**
+	 * @param tweet
+	 * @return an array of words in the tweet delimited by TWEET_DELIMITER
+	 */
 	public static String[] splitTweet(String tweet) {
 		if (tweet != null) {
 			return tweet.split(TWEET_DELIMITER);
@@ -41,8 +45,7 @@ public class Utility {
 		return null;
 	}
 
-	public static void procedureWordCountInput(String inputPath,
-			String outputPath) {
+	public static void procedureWordCount(String inputPath, String outputPath) {
 		if (inputPath != null) {
 			File file = new File(inputPath);
 			Scanner input = null;
@@ -88,10 +91,9 @@ public class Utility {
 			br = new BufferedReader(new FileReader(inputPath));
 			for (String line = br.readLine(); line != null && !line.isEmpty(); line = br
 					.readLine()) {
-				int val = getUniqueWordCount(line);
-				rm.encounterNew(val);
+				rm.encounterNew(getUniqueWordCount(line));
 				sb.append(formatFloatString(rm.getCurrentMedian()));
-				sb.append("\n");
+				sb.append(System.getProperty("line.separator"));
 			}
 		} catch (FileNotFoundException e) {
 			System.err.println("File " + inputPath + " does not exit");

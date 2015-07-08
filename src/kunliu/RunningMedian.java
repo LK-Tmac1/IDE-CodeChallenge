@@ -1,6 +1,6 @@
 package kunliu;
 
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -25,19 +25,6 @@ public class RunningMedian {
 	private final boolean saveSpace;
 
 	/**
-	 * A comparator interface implementation that compare two values in
-	 * descending order.
-	 * 
-	 * @author Kun
-	 *
-	 */
-	class DescendCmptor implements Comparator<Float> {
-		public int compare(Float x, Float y) {
-			return (int) (y - x);
-		}
-	}
-
-	/**
 	 * Default constructor for a RunningMedian object. The saveSpace flag is set
 	 * to true.
 	 */
@@ -56,7 +43,8 @@ public class RunningMedian {
 	public RunningMedian(boolean saveSpace) {
 		median = Integer.MIN_VALUE;
 		rightMinHeap = new PriorityQueue<Float>(CAPACITY);
-		leftMaxHeap = new PriorityQueue<Float>(CAPACITY, new DescendCmptor());
+		leftMaxHeap = new PriorityQueue<Float>(CAPACITY,
+				Collections.reverseOrder());
 		medianList = new LinkedList<Float>();
 		this.saveSpace = saveSpace;
 	}
@@ -128,6 +116,9 @@ public class RunningMedian {
 	}
 
 	public static void main(String args[]) {
+		args = new String[2];
+		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_input/tweets.txt";
+		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/result3.txt";
 		if (Utility.validateArgument(args)) {
 			Utility.procedureRunMed(args[0], args[1]);
 		}
