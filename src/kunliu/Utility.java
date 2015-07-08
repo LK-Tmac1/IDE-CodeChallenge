@@ -7,11 +7,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
+/**
+ * A general purpose helper class.
+ * 
+ * @author Kun
+ *
+ */
 public class Utility {
 
 	/**
@@ -29,8 +33,8 @@ public class Utility {
 		return false;
 	}
 
-	public static Map<String, Integer> wordCountMap = new HashMap<String, Integer>();
-
+	public static final String LINE_SEPARATOR = System
+			.getProperty("line.separator");
 	public static final String TWEET_DELIMITER = " ";
 
 	/**
@@ -42,6 +46,26 @@ public class Utility {
 			return tweet.split(TWEET_DELIMITER);
 		}
 		return null;
+	}
+
+	public static BufferedReader getBufferedReader(String inputPath) {
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(inputPath));
+		} catch (FileNotFoundException e) {
+			System.err.println("File " + inputPath + " does not exit");
+			e.printStackTrace();
+		}
+		return br;
+	}
+
+	public static void closeBufferedReader(BufferedReader br) {
+		if (br != null)
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 	public static boolean procedureWordCount(String inputPath, String outputPath) {
@@ -63,47 +87,6 @@ public class Utility {
 			}
 		}
 		return writeOutputFile(outputPath, "");
-	}
-
-	/**
-	 * This procedure will read the input data line by line and then calculate
-	 * the running median by using the RunningMedian class, and finally save the
-	 * calculation result into output path.
-	 * <p>
-	 * Note that if a line is empty, i.e. contains no content except whitespace,
-	 * it will not be counted.
-	 * 
-	 * @see kunliu.RunningMedian
-	 * @param inputPath
-	 * @param outputPath
-	 * @return true if the running median is successfully calculated.
-	 */
-	public static boolean procedureRunMed(String inputPath, String outputPath) {
-		BufferedReader br = null;
-		StringBuilder sb = new StringBuilder();
-		try {
-			RunningMedian rm = new RunningMedian();
-			br = new BufferedReader(new FileReader(inputPath));
-			for (String line = br.readLine(); line != null; line = br
-					.readLine()) {
-				if (!line.trim().isEmpty()) {
-					rm.encounterNew(getUniqueWordCount(line));
-					sb.append(formatFloatString(rm.getCurrentMedian()));
-					sb.append(System.getProperty("line.separator"));
-				}
-			}
-		} catch (FileNotFoundException e) {
-			System.err.println("File " + inputPath + " does not exit");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return writeOutputFile(outputPath, sb.toString());
 	}
 
 	/**
@@ -160,7 +143,7 @@ public class Utility {
 	 * @param tweet
 	 * @return the size of the hash set
 	 */
-	public static int getUniqueWordCount(String tweet) {
+	public static int uniqueWordNumber(String tweet) {
 		Set<String> wordSet = new HashSet<String>();
 		for (String word : splitTweet(tweet)) {
 			if (!wordSet.contains(word)) {

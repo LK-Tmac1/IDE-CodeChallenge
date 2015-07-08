@@ -1,5 +1,7 @@
 package kunliu;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.PriorityQueue;
 public class RunningMedian {
 
 	private float median;
-	private static final int CAPACITY = 1000;
+	private static final int QUEUE_CAPACITY = 1000;
 	private PriorityQueue<Float> rightMinHeap;
 	private PriorityQueue<Float> leftMaxHeap;
 	private List<Float> medianList;
@@ -42,8 +44,8 @@ public class RunningMedian {
 	 */
 	public RunningMedian(boolean saveSpace) {
 		median = Integer.MIN_VALUE;
-		rightMinHeap = new PriorityQueue<Float>(CAPACITY);
-		leftMaxHeap = new PriorityQueue<Float>(CAPACITY,
+		rightMinHeap = new PriorityQueue<Float>(QUEUE_CAPACITY);
+		leftMaxHeap = new PriorityQueue<Float>(QUEUE_CAPACITY,
 				Collections.reverseOrder());
 		medianList = new LinkedList<Float>();
 		this.saveSpace = saveSpace;
@@ -115,14 +117,41 @@ public class RunningMedian {
 		return saveSpace ? null : this.medianList;
 	}
 
-	public static void main(String args[]) {
-		args = new String[2];
-		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_input/tweets.txt";
-		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/result3.txt";
-		if (Utility.validateArgument(args)) {
-			if (Utility.procedureRunMed(args[0], args[1])) {
-				System.out.println("Running median calculaed successfully.");
+	/**
+	 * This procedure will read the input data line by line and then calculate
+	 * the running median by using the RunningMedian class, and finally save the
+	 * calculation result into output path.
+	 * <p>
+	 * Note that if a line is empty, i.e. contains no content except whitespace,
+	 * it will not be counted.
+	 * 
+	 * @param inputPath
+	 * @param outputPath
+	 * @return true if the running median is successfully calculated.
+	 */
+	public static boolean procedureRunMed(String inputPath, String outputPath) {
+		BufferedReader br = Utility.getBufferedReader(inputPath);
+		StringBuilder sb = new StringBuilder();
+		RunningMedian rm = new RunningMedian();
+		try {
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (!line.trim().isEmpty()) {
+					rm.encounterNew(Utility.uniqueWordNumber(line));
+					sb.append(Utility.formatFloatString(rm.getCurrentMedian()));
+					sb.append(Utility.LINE_SEPARATOR);
+				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			Utility.closeBufferedReader(br);
 		}
+		return Utility.writeOutputFile(outputPath, sb.toString());
+	}
+
+	public static void main(String args[]) {
+		if (Utility.validateArgument(args) && procedureRunMed(args[0], args[1]))
+			System.out.println("Running median calculaed successfully.");
 	}
 }
