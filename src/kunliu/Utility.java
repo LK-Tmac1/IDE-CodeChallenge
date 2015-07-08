@@ -87,8 +87,7 @@ public class Utility {
 			for (String line = br.readLine(); line != null; line = br
 					.readLine()) {
 				if (!line.trim().isEmpty()) {
-					float val = getUniqueWordCount(line);
-					rm.encounterNew(val);
+					rm.encounterNew(getUniqueWordCount(line));
 					sb.append(formatFloatString(rm.getCurrentMedian()));
 					sb.append(System.getProperty("line.separator"));
 				}
