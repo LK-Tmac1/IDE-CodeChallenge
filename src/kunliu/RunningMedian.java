@@ -120,7 +120,9 @@ public class RunningMedian {
 		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_input/tweets.txt";
 		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/result3.txt";
 		if (Utility.validateArgument(args)) {
-			Utility.procedureRunMed(args[0], args[1]);
+			if (Utility.procedureRunMed(args[0], args[1])) {
+				System.out.println("Running median calculaed successfully.");
+			}
 		}
 	}
 }
