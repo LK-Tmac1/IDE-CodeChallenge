@@ -33,17 +33,10 @@ public class Utility {
 	 */
 	public static String[] splitTweet(String tweet) {
 		if (tweet != null) {
-			return tweet.split(BufferedReadWrite.TWEET_DELIMITER);
+			return tweet.split(IOManager.TWEET_DELIMITER);
 		}
 		return null;
 	}
-
-	/*
-	 * public static void writeTempFile(List<String> tempFileList, String
-	 * parentDir, String output) { String tempFileName = "temp_" +
-	 * System.currentTimeMillis(); if (writeOutputFile(parentDir + tempFileName,
-	 * output)) { tempFileList.add(tempFileName); } }*
-	 */
 
 	/**
 	 * Given a file path, return its parent directory.

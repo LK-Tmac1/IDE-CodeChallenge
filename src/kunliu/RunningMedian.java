@@ -96,29 +96,29 @@ public class RunningMedian {
 	 * @return true if the running median is successfully calculated.
 	 */
 	public static boolean procedureRunMed(String inputPath, String outputPath) {
-		BufferedReadWrite bfrw = new BufferedReadWrite();
-		bfrw.openBufferedReader(inputPath);
+		IOManager bfrw = new IOManager();
 		StringBuilder sb = new StringBuilder();
 		RunningMedian rm = new RunningMedian();
+		bfrw.openBufferedReader(inputPath);
 		String line;
 		while ((line = bfrw.readNextLine()) != null) {
 			if (!line.trim().isEmpty()) {
 				rm.encounterNew(Utility.uniqueWordNumber(line));
 				sb.append(Utility.formatFloatString(rm.getCurrentMedian()));
-				sb.append(BufferedReadWrite.LINE_SEPARATOR);
+				sb.append(IOManager.LINE_SEPARATOR);
 			}
 		}
 		bfrw.closeBufferedReader();
 		bfrw.openBufferedWriter(outputPath);
-		bfrw.writeNextLine(sb.toString());
+		bfrw.writeOutput(sb.toString());
 		bfrw.closeBufferedWriter();
 		return true;
 	}
 
 	public static void main(String args[]) {
 		args = new String[2];
-		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/test/3.txt";
-		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/ft5.txt";
+		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_input/tweets.txt";
+		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/ft1.txt";
 
 		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
 				.getInstance().getTime()));
