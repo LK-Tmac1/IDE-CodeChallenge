@@ -3,8 +3,6 @@ package kunliu;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.PriorityQueue;
 
 /**
@@ -23,32 +21,12 @@ public class RunningMedian {
 	private static final int QUEUE_CAPACITY = 1000;
 	private PriorityQueue<Float> rightMinHeap;
 	private PriorityQueue<Float> leftMaxHeap;
-	private List<Float> medianList;
-	private final boolean saveSpace;
 
-	/**
-	 * Default constructor for a RunningMedian object. The saveSpace flag is set
-	 * to true.
-	 */
 	public RunningMedian() {
-		this(true);
-	}
-
-	/**
-	 * The saveSpace is a flag that indicates if the historical running median
-	 * should be recorded or not.
-	 * 
-	 * @param saveSpace
-	 *            If true then the list will be null otherwise will be used to
-	 *            store historical running median values.
-	 */
-	public RunningMedian(boolean saveSpace) {
 		median = Integer.MIN_VALUE;
 		rightMinHeap = new PriorityQueue<Float>(QUEUE_CAPACITY);
 		leftMaxHeap = new PriorityQueue<Float>(QUEUE_CAPACITY,
 				Collections.reverseOrder());
-		medianList = new LinkedList<Float>();
-		this.saveSpace = saveSpace;
 	}
 
 	/**
@@ -103,18 +81,6 @@ public class RunningMedian {
 			}
 			median = (rightMinHeap.peek() + leftMaxHeap.peek()) / 2;
 		}
-		if (!saveSpace) {
-			medianList.add(median);
-		}
-	}
-
-	/**
-	 * If save space mode is enabled, then will return null object for the list.
-	 * 
-	 * @return A list that contains all the running median so far.
-	 */
-	public List<Float> getMedianList() {
-		return saveSpace ? null : this.medianList;
 	}
 
 	/**
