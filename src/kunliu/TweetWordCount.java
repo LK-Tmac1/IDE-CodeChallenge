@@ -1,9 +1,5 @@
 package kunliu;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,11 +7,7 @@ import java.util.TreeMap;
 
 public class TweetWordCount {
 
-	/**
-	 * When the max word count number is reached, dump the word count map into a
-	 * file.
-	 */
-	public static final int MAX_WORDCOUNT = 1000;
+	public static final int MAX_HASHFILE = 1000;
 
 	private TreeMap<String, Integer> wordCountMap;
 	private List<String> tempFileList;
@@ -30,8 +22,8 @@ public class TweetWordCount {
 		Iterator<String> iter = wordCountMap.keySet().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next();
-			sb.append(key + Utility.WC_DELIMITER + wordCountMap.get(key)
-					+ Utility.LINE_SEPARATOR);
+			sb.append(key + BufferedReadWrite.WC_DELIMITER
+					+ wordCountMap.get(key) + BufferedReadWrite.LINE_SEPARATOR);
 		}
 		return sb.toString();
 	}
@@ -48,7 +40,7 @@ public class TweetWordCount {
 	}
 
 	public boolean isMapFull() {
-		return this.wordCountMap.size() < MAX_WORDCOUNT;
+		return this.wordCountMap.size() < MAX_HASHFILE;
 	}
 
 	/**
@@ -62,23 +54,8 @@ public class TweetWordCount {
 	}
 
 	public static boolean procedureWordCount(String inputPath, String outputPath) {
-		BufferedReader br = Utility.openBufferedReader(inputPath);
-		String line;
-		TweetWordCount twc = new TweetWordCount();
-		try {
-			while ((line = br.readLine()) != null) {
-				if (!line.trim().isEmpty()) {
-					if (twc.isMapFull()) {
 
-					} else {
-
-					}
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return Utility.writeOutputFile(outputPath, "");
+		return true;
 	}
 
 	public static void main(String args[]) {

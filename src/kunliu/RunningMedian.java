@@ -1,7 +1,7 @@
 package kunliu;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.PriorityQueue;
 
@@ -96,31 +96,36 @@ public class RunningMedian {
 	 * @return true if the running median is successfully calculated.
 	 */
 	public static boolean procedureRunMed(String inputPath, String outputPath) {
-		BufferedReader br = Utility.openBufferedReader(inputPath);
+		BufferedReadWrite bfrw = new BufferedReadWrite();
+		bfrw.openBufferedReader(inputPath);
 		StringBuilder sb = new StringBuilder();
 		RunningMedian rm = new RunningMedian();
-		try {
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (!line.trim().isEmpty()) {
-					rm.encounterNew(Utility.uniqueWordNumber(line));
-					sb.append(Utility.formatFloatString(rm.getCurrentMedian()));
-					sb.append(Utility.LINE_SEPARATOR);
-				}
+		String line;
+		while ((line = bfrw.readNextLine()) != null) {
+			if (!line.trim().isEmpty()) {
+				rm.encounterNew(Utility.uniqueWordNumber(line));
+				sb.append(Utility.formatFloatString(rm.getCurrentMedian()));
+				sb.append(BufferedReadWrite.LINE_SEPARATOR);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			Utility.closeBufferedReader(br);
 		}
-		return Utility.writeOutputFile(outputPath, sb.toString());
+		bfrw.closeBufferedReader();
+		bfrw.openBufferedWriter(outputPath);
+		bfrw.writeNextLine(sb.toString());
+		bfrw.closeBufferedWriter();
+		return true;
 	}
 
 	public static void main(String args[]) {
 		args = new String[2];
-		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_input/tweets.txt";
-		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/ft2.txt";
-		if (Utility.validateArgument(args) && procedureRunMed(args[0], args[1]))
+		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/test/3.txt";
+		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/ft5.txt";
+
+		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
+				.getInstance().getTime()));
+		if (Utility.validateArgument(args) && procedureRunMed(args[0], args[1])) {
 			System.out.println("Running median calculaed successfully.");
+		}
+		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
+				.getInstance().getTime()));
 	}
 }
