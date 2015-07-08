@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,6 +18,11 @@ import java.util.Set;
  *
  */
 public class Utility {
+
+	public static final String LINE_SEPARATOR = System
+			.getProperty("line.separator");
+	public static final String TWEET_DELIMITER = " ";
+	public static final String WC_DELIMITER = "\t";
 
 	/**
 	 * Validate the arguments number.
@@ -33,10 +39,6 @@ public class Utility {
 		return false;
 	}
 
-	public static final String LINE_SEPARATOR = System
-			.getProperty("line.separator");
-	public static final String TWEET_DELIMITER = " ";
-
 	/**
 	 * @param tweet
 	 * @return an array of words in the tweet delimited by TWEET_DELIMITER
@@ -48,13 +50,13 @@ public class Utility {
 		return null;
 	}
 
-	public static BufferedReader getBufferedReader(String inputPath) {
+	public static BufferedReader openBufferedReader(String inputPath) {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(inputPath));
 		} catch (FileNotFoundException e) {
-			System.err.println("File " + inputPath + " does not exit");
-			e.printStackTrace();
+			System.err.println("File " + inputPath + " does not exist");
+			System.exit(-1);
 		}
 		return br;
 	}
@@ -68,25 +70,12 @@ public class Utility {
 			}
 	}
 
-	public static boolean procedureWordCount(String inputPath, String outputPath) {
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(inputPath));
-			for (String line = br.readLine(); line != null; line = br
-					.readLine()) {
-			}
-		} catch (FileNotFoundException e) {
-			System.err.println("File " + inputPath + " does not exit");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	public static void writeTempFile(List<String> tempFileList,
+			String parentDir, String output) {
+		String tempFileName = "temp_" + System.currentTimeMillis();
+		if (writeOutputFile(parentDir + tempFileName, output)) {
+			tempFileList.add(tempFileName);
 		}
-		return writeOutputFile(outputPath, "");
 	}
 
 	/**
@@ -105,24 +94,6 @@ public class Utility {
 				bfw = new BufferedWriter(new FileWriter(outputPath));
 				bfw.write(output);
 				bfw.flush();
-			} catch (FileNotFoundException e) {
-				int index = outputPath.lastIndexOf(File.separator);
-				if (index > -1) {
-					final File parent = new File(outputPath.substring(0, index));
-					final String fileName = outputPath.substring(index + 1,
-							outputPath.length());
-					if (!parent.mkdirs()) {
-						System.err.println("Could not create parent directory");
-					}
-					try {
-						new File(parent, fileName).createNewFile();
-						return writeOutputFile(outputPath, output);
-					} catch (IOException e1) {
-						System.err.println("Could not create " + outputPath);
-					}
-				} else {
-					e.printStackTrace();
-				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
@@ -134,6 +105,20 @@ public class Utility {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Given a file path, return its parent directory.
+	 * 
+	 * @param filePath
+	 * @return parent directory of the file, if existed.
+	 */
+	public static String parentDirPath(String filePath) {
+		if (filePath != null && !filePath.trim().isEmpty()) {
+			int index = filePath.lastIndexOf(File.separator);
+			return index > -1 ? filePath.substring(0, index) : null;
+		}
+		return null;
 	}
 
 	/**

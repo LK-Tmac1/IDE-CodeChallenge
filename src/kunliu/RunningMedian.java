@@ -130,7 +130,7 @@ public class RunningMedian {
 	 * @return true if the running median is successfully calculated.
 	 */
 	public static boolean procedureRunMed(String inputPath, String outputPath) {
-		BufferedReader br = Utility.getBufferedReader(inputPath);
+		BufferedReader br = Utility.openBufferedReader(inputPath);
 		StringBuilder sb = new StringBuilder();
 		RunningMedian rm = new RunningMedian();
 		try {
@@ -151,6 +151,9 @@ public class RunningMedian {
 	}
 
 	public static void main(String args[]) {
+		args = new String[2];
+		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_input/tweets.txt";
+		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/ft2.txt";
 		if (Utility.validateArgument(args) && procedureRunMed(args[0], args[1]))
 			System.out.println("Running median calculaed successfully.");
 	}
