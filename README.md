@@ -5,7 +5,7 @@ More details about this code challenge: https://github.com/InsightDataScience/cc
 
 More details about this program: http://insightdataengineering.com/
 
-##Feature 1: Tweet word count
+##More about the tweet word count feature
 
 Intuitively, if the data is small, a sorted map data structure like tree map can be used to store and sort the word-count pair. But when processing very large dataset, the memory limit will be an issue when the data is too large to be fit in memory at once and thus that naive approach is not good. In contrast, the idea of Map-Reduce and Hadoop is employed here, i.e.:<br>
 1. Split the input data into several temporary files, each of which contains the words with the same hashing value (after offset);<br>
@@ -18,5 +18,3 @@ Step 1 and 2 together is like the Map phase in MapReduce, as the input file is s
 The tradeoff is that, generating temporary files and merging them will cost more time. For example, when data is small, the two approaches are same in running time, but for a input data that is not too large, say a ~3GB input file, the naive method that reads all data in memory at once took roughly 40 seconds, whereas in the same machine, the second approach took 60 seconds.
 
 To run the program in the "Naive" mode, adding a "-n|N" flag to the command line, i.e.:<br><i>"java -cp src/TweetWordCount tweet_input/tweets tweet_output/ft1 <b>-n</b>"</i>
-
-##Feature 2: Running median
