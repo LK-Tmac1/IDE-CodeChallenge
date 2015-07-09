@@ -1,5 +1,3 @@
-package kunliu;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,11 +6,6 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.TreeMap;
 
-/*
- * Scan the whole file is very fast using BufferedReader, 1.77GB used 5 seconds.
- * But if the naive procedure is used, very slow, costed rouggly 4~ mins.
- * If more complicated regex is used, say [.;:\\s], the matching will be much slower
- */
 /**
  * An object that encapsulates data structures and methods for tweet word count.
  * <p>
