@@ -91,9 +91,8 @@ public class RunningMedian {
 	 * 
 	 * @param inputPath
 	 * @param outputPath
-	 * @return true if the running median is successfully calculated.
 	 */
-	public static boolean procedureRunMed(String inputPath, String outputPath) {
+	public static void procedureRunMed(String inputPath, String outputPath) {
 		IOManager bfrw = new IOManager();
 		StringBuilder sb = new StringBuilder();
 		RunningMedian rm = new RunningMedian();
@@ -110,12 +109,11 @@ public class RunningMedian {
 		bfrw.openBufferedWriter(outputPath);
 		bfrw.writeOutput(sb.toString());
 		bfrw.closeBufferedWriter();
-		return true;
 	}
 
 	public static void main(String args[]) {
-		if (Utility.validateArgument(args) && procedureRunMed(args[0], args[1])) {
-			System.out.println("Running median calculaed successfully.");
+		if (Utility.validateArgument(args)) {
+			procedureRunMed(args[0], args[1]);
 		}
 	}
 }
