@@ -16,7 +16,7 @@ public class Utility {
 	 * @return true if two arguments.
 	 */
 	public static boolean validateArgument(String[] args) {
-		if (args != null && args.length == 2 && !args[0].isEmpty()
+		if (args != null && args.length >= 2 && !args[0].isEmpty()
 				&& !args[1].isEmpty()) {
 			return true;
 		}

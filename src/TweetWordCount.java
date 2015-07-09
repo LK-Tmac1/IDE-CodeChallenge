@@ -228,7 +228,11 @@ public class TweetWordCount {
 
 	public static void main(String args[]) {
 		if (Utility.validateArgument(args)) {
-			procedureWordCountDist(args[0], args[1]);
+			if (args.length < 3 || args[2].equalsIgnoreCase("-n")) {
+				procedureWordCountDist(args[0], args[1]);
+			} else {
+				procedureWordCountNaive(args[0], args[1]);
+			}
 		}
 	}
 }
