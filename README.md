@@ -8,9 +8,9 @@ More details about this program: http://insightdataengineering.com/
 ##More about the tweet word count feature
 
 Intuitively, if the data is small, a sorted map data structure like tree map can be used to store and sort the word-count pair. But when processing very large dataset, the memory limit will be an issue when the data is too large to be fit in memory at once and thus that naive approach is not good. In contrast, the idea of Map-Reduce and Hadoop is employed here, i.e.:<br>
-1. Split the input data into several temporary files, each of which contains the words with the same hashing value (after offset);<br>
-2. Now each split file is much smaller than the input (so can be read in memory at once), for each of them, a tree map can be used to sort and group the word-count pair, and also put the word-count result in the map into another temporary file;<br>
-3. Now for each of those files generated in step 2, merge them into a single file, and reserve the order of word by using a priority queue data structure. Finally, clear up all the temporary files generated in step 1 and step 2.
+1. Split the input data into several temporary files; each contains the words with the same hashing value (after offset)<br>
+2. Now each split file is much smaller than the input, for each of them, a tree map can be used to sort and group the word-count pair, and also put the word-count result in the map into another temporary file<br>
+3. Now for each of those files generated in step 2, merge them into a single file, and reserve the order of word by using a priority queue data structure. Finally, clear up all the temporary files generated in step 1 and step 2
 
 ![Workflow](image/workflow-twc.jpg)
 
