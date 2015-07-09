@@ -161,10 +161,12 @@ public class TweetWordCount {
 	}
 
 	/**
-	 * A function
+	 * A function that takes all the files in the input directory path, and for
+	 * each file, sort and group the word and calculate the word count number,
+	 * by using a tree map data structure.
 	 * 
 	 * @param dirPath
-	 * @return
+	 * @return the directory that contains the sorted and grouped files
 	 */
 	private static String sortGroupWordDirectory(String dirPath) {
 		File path = new File(dirPath);
@@ -201,7 +203,7 @@ public class TweetWordCount {
 	 * 2. The order of words does not matter as may be sorted and grouped later.
 	 * 
 	 * @param inputPath
-	 * @return
+	 * @return the directory that contains the split files
 	 */
 	private static String splitInputToHashFiles(String inputPath) {
 		IOManager ioM = new IOManager();
