@@ -4,19 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A general purpose helper class. Contains predefined constants.
+ * A general purpose helper class.
  * 
  * @author Kun
  *
  */
 public class Utility {
-
-	public static final String LINE_SEPARATOR = System
-			.getProperty("line.separator");
-	public static final String TWEET_DELIMITER = " ";
-	public static final String WC_DELIMITER = "\t";
-	
-	
 
 	/**
 	 * Validate the arguments number.
@@ -39,7 +32,7 @@ public class Utility {
 	 */
 	public static String[] splitTweet(String tweet) {
 		if (tweet != null) {
-			return tweet.split(IOManager.TWEET_DELIMITER);
+			return tweet.trim().split(IOManager.TWEET_DELIMITER);
 		}
 		return null;
 	}
@@ -54,9 +47,7 @@ public class Utility {
 	public static int uniqueWordNumber(String tweet) {
 		Set<String> wordSet = new HashSet<String>();
 		for (String word : splitTweet(tweet)) {
-			if (!wordSet.contains(word)) {
-				wordSet.add(word);
-			}
+			wordSet.add(word);
 		}
 		return wordSet.size();
 	}
@@ -67,9 +58,7 @@ public class Utility {
 	 * @param a
 	 * @return
 	 */
-	public static String formatFloatString(float a) {
-		return a == (int) (a) ? String.format("%d", (int) a) : String.format(
-				"%s", a);
+	public static String formatFloatString(float f) {
+		return String.format("%.2f", f);
 	}
-
 }

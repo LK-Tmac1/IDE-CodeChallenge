@@ -8,11 +8,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * An object that encapsulates necessary data structures and methods for I/O
+ * operations. An instance will have a buffered reader and a buffered writer.
+ * 
+ * @author Kun
+ *
+ */
 public class IOManager {
+
 	public static final String LINE_SEPARATOR = System
 			.getProperty("line.separator");
 	public static final String TWEET_DELIMITER = " ";
-	public static final String WC_DELIMITER = "\t";
+	public static final String WC_DELIMITER = " ";
 
 	private BufferedReader bfr;
 	private BufferedWriter bfw;
@@ -24,10 +32,12 @@ public class IOManager {
 		isWriterOpen = false;
 	}
 
-	public boolean isWriterOpen() {
-		return this.isWriterOpen;
-	}
-
+	/**
+	 * Open the buffered reader based on the input path. If no such file found
+	 * in the path, exit the program and print error messages.
+	 * 
+	 * @param inputPath
+	 */
 	public void openBufferedReader(String inputPath) {
 		try {
 			closeBufferedReader();
@@ -38,6 +48,12 @@ public class IOManager {
 		}
 	}
 
+	/**
+	 * If the buffered reader variable is opened, read the next line from the
+	 * reader.
+	 * 
+	 * @return the next line in the file being read
+	 */
 	public String readNextLine() {
 		String line = null;
 		try {
@@ -51,14 +67,21 @@ public class IOManager {
 	}
 
 	public void closeBufferedReader() {
-		if (bfr != null)
+		if (bfr != null) {
 			try {
 				bfr.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
 	}
 
+	/**
+	 * Tries to open a buffered writer to a file. If such file or its parent
+	 * directory does not exist, create the file first and then write to it.
+	 * 
+	 * @param outputPath
+	 */
 	public void openBufferedWriter(String outputPath) {
 		try {
 			closeBufferedWriter();
@@ -79,8 +102,13 @@ public class IOManager {
 		}
 	}
 
+	/**
+	 * When the buffered writer is open, write output to the buffer.
+	 * 
+	 * @param output
+	 */
 	public void writeOutput(String output) {
-		if (this.isWriterOpen && output != null) {
+		if (isWriterOpen && output != null) {
 			try {
 				bfw.write(output);
 			} catch (IOException e) {
@@ -100,6 +128,12 @@ public class IOManager {
 		}
 	}
 
+	/**
+	 * Recursively delete all the files and directories in a directory, and also
+	 * the directory itself.
+	 * 
+	 * @param fileDir
+	 */
 	public static void deleteDirectory(String fileDir) {
 		if (fileDir != null && !fileDir.trim().isEmpty()) {
 			File dir = new File(fileDir);

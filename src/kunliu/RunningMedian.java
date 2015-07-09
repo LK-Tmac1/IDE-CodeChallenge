@@ -1,7 +1,5 @@
 package kunliu;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.PriorityQueue;
 
@@ -11,7 +9,8 @@ import java.util.PriorityQueue;
  * <p>
  * The idea is to use two priority queues, i.e. a max heap and an min heap to
  * store the elements smaller and larger than the current median value
- * respectively.
+ * respectively. Whenever a new value is inserted, update the two heaps based on
+ * certain rules.
  * 
  * @author Kun
  */
@@ -54,7 +53,7 @@ public class RunningMedian {
 	 * @param val
 	 *            The new value encountered.
 	 */
-	public void encounterNew(float val) {
+	public float encounterNew(float val) {
 		if (rightMinHeap.size() == leftMaxHeap.size()) {
 			if (val > median) {
 				rightMinHeap.add(val);
@@ -81,6 +80,7 @@ public class RunningMedian {
 			}
 			median = (rightMinHeap.peek() + leftMaxHeap.peek()) / 2;
 		}
+		return this.median;
 	}
 
 	/**
@@ -103,8 +103,8 @@ public class RunningMedian {
 		String line;
 		while ((line = bfrw.readNextLine()) != null) {
 			if (!line.trim().isEmpty()) {
-				rm.encounterNew(Utility.uniqueWordNumber(line));
-				sb.append(Utility.formatFloatString(rm.getCurrentMedian()));
+				float count = Utility.uniqueWordNumber(line);
+				sb.append(Utility.formatFloatString(rm.encounterNew(count)));
 				sb.append(IOManager.LINE_SEPARATOR);
 			}
 		}
@@ -116,16 +116,8 @@ public class RunningMedian {
 	}
 
 	public static void main(String args[]) {
-		args = new String[2];
-		args[0] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_input/tweets.txt";
-		args[1] = "/Users/Kun/Git/IDE-CodeChallenge/tweet_output/ft2.txt";
-
-		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
-				.getInstance().getTime()));
 		if (Utility.validateArgument(args) && procedureRunMed(args[0], args[1])) {
 			System.out.println("Running median calculaed successfully.");
 		}
-		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
-				.getInstance().getTime()));
 	}
 }

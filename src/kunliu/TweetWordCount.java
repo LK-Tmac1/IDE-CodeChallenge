@@ -1,8 +1,6 @@
 package kunliu;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,17 +13,36 @@ import java.util.TreeMap;
  * But if the naive procedure is used, very slow, costed rouggly 4~ mins.
  * If more complicated regex is used, say [.;:\\s], the matching will be much slower
  */
+/**
+ * An object that encapsulates data structures and methods for tweet word count.
+ * <p>
+ * There are two procedures, one is for small input data that can be fit in
+ * memory directly, and the other one is a Map-Reduce like procedure.
+ * 
+ * @author Kun
+ *
+ */
 public class TweetWordCount {
 
-	public static final int MAX_WORD = 1000;
-	public static final int MAX_HASHFILE = 100;
+	/**
+	 * The threshold for intermediate hashing files number.
+	 */
+	private static final int MAX_HASHFILE = 100;
 
+	/**
+	 * Used to sort and word-count pair based on the word key.
+	 */
 	private TreeMap<String, Integer> wcMap;
 
 	public TweetWordCount() {
 		this.wcMap = new TreeMap<String, Integer>();
 	}
 
+	/**
+	 * Convert the sorted word-count pairs in the tree map to a string object.
+	 * 
+	 * @return string format of word-count pairs
+	 */
 	public String dumpWordCountMap() {
 		StringBuilder sb = new StringBuilder();
 		Iterator<Entry<String, Integer>> iter = wcMap.entrySet().iterator();
@@ -52,7 +69,14 @@ public class TweetWordCount {
 		updateWordCount(word, 1);
 	}
 
-	public static boolean procedureWordCountNaive(String input, String output) {
+	/**
+	 * A naive procedure for processing small amount of data that can be fit in
+	 * memory.
+	 * <p>
+	 * The idea is straightforward, i.e. use a hash map to store and update the
+	 * word-count pair.
+	 */
+	public static void procedureWordCountNaive(String input, String output) {
 		IOManager bfrw = new IOManager();
 		bfrw.openBufferedReader(input);
 		TweetWordCount wc = new TweetWordCount();
@@ -68,20 +92,41 @@ public class TweetWordCount {
 		bfrw.openBufferedWriter(output);
 		bfrw.writeOutput(wc.dumpWordCountMap());
 		bfrw.closeBufferedWriter();
-		return true;
 	}
 
-	public static boolean procedureWordCountDist(String input, String output) {
+	/**
+	 * A procedure that split input data that cannot be fit to memory to
+	 * partitions, each of which contains the keywords with the same hash code
+	 * value, and then sort and group every word in each of those files, and
+	 * finally merge those files into a single one, i.e. the output, and delete
+	 * all temporary intermediate files created.
+	 */
+	public static void procedureWordCountDist(String input, String output) {
 		String tempSplitDir = splitInputToHashFiles(input);
 		String tempSortGroupDir = sortGroupWordDirectory(tempSplitDir);
-		if (mergeWordCount(tempSortGroupDir, output)) {
-			IOManager.deleteDirectory(new File(tempSplitDir).getParent());
-			return true;
-		}
-		return false;
+		mergeWordCount(tempSortGroupDir, output);
+		IOManager.deleteDirectory(new File(tempSplitDir).getParent());
 	}
 
-	private static boolean mergeWordCount(String mergePath, String output) {
+	/**
+	 * A procedure that merge all the files in the merge path into the output
+	 * file.
+	 * <p>
+	 * The assumption is that all the word-count values in every file are sorted
+	 * already. The idea is to use a priority queue, with each word-count pair
+	 * as the priority key, (no two word-count pair will be same), and each time
+	 * extract the first value from the queue, write it to the buffered writer,
+	 * update the corresponding reader that reading word-count pair by a map of
+	 * word-count to file index, until all word-pair are processed.
+	 * <p>
+	 * If there are k files, this procedure will take extra space in O(k) level,
+	 * as the priority queue will have k elements at most, there will be an
+	 * array of k buffered reader, and a map of k line-file-index pair.
+	 * <p>
+	 * The time complexity is, assuming there are w distinct words, in O(wlogk)
+	 * level, because of the priority queue property.
+	 */
+	private static void mergeWordCount(String mergePath, String output) {
 		File mergeDir = new File(mergePath);
 		if (mergeDir.isDirectory()) {
 			File[] allFile = mergeDir.listFiles();
@@ -113,9 +158,14 @@ public class TweetWordCount {
 			}
 			writer.closeBufferedWriter();
 		}
-		return true;
 	}
 
+	/**
+	 * A function
+	 * 
+	 * @param dirPath
+	 * @return
+	 */
 	private static String sortGroupWordDirectory(String dirPath) {
 		File path = new File(dirPath);
 		if (path.exists()) {
@@ -142,6 +192,17 @@ public class TweetWordCount {
 		return null;
 	}
 
+	/**
+	 * A function receives the input path, and split the input file into
+	 * multiple files based on the following rules:
+	 * <p>
+	 * 1. All words that have the same hashing value (after offset), will be
+	 * stored in the same file.<br>
+	 * 2. The order of words does not matter as may be sorted and grouped later.
+	 * 
+	 * @param inputPath
+	 * @return
+	 */
 	private static String splitInputToHashFiles(String inputPath) {
 		IOManager ioM = new IOManager();
 		ioM.openBufferedReader(inputPath);
@@ -153,14 +214,12 @@ public class TweetWordCount {
 		while ((line = ioM.readNextLine()) != null) {
 			if (!line.trim().isEmpty()) {
 				for (String word : Utility.splitTweet(line)) {
-					int hashFile = Math.abs(word.hashCode()) % MAX_HASHFILE;
-					if (bfwArray[hashFile] == null) {
-						bfwArray[hashFile] = new IOManager();
-						bfwArray[hashFile].openBufferedWriter(tempDir
-								+ hashFile + ".txt");
+					int h = Math.abs(word.hashCode()) % MAX_HASHFILE;
+					if (bfwArray[h] == null) {
+						bfwArray[h] = new IOManager();
+						bfwArray[h].openBufferedWriter(tempDir + h + ".txt");
 					}
-					bfwArray[hashFile].writeOutput(word
-							+ IOManager.LINE_SEPARATOR);
+					bfwArray[h].writeOutput(word + IOManager.LINE_SEPARATOR);
 				}
 			}
 		}
@@ -173,18 +232,8 @@ public class TweetWordCount {
 	}
 
 	public static void main(String args[]) {
-		args = new String[2];
-		String parDir = "/Users/Kun/Git/IDE-CodeChallenge/";
-		args[0] = parDir + "tweet_input/tweets.txt";
-		args[1] = parDir + "tweet_output/ft1.txt";
-		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
-				.getInstance().getTime()));
-		if (Utility.validateArgument(args)
-				&& procedureWordCountDist(args[0], args[1])) {
-			System.out.println("Word count calaulated successfully.");
+		if (Utility.validateArgument(args)) {
+			procedureWordCountDist(args[0], args[1]);
 		}
-		System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar
-				.getInstance().getTime()));
 	}
-
 }
