@@ -20,3 +20,7 @@ The tradeoff is that, generating temporary files and merging them will cost more
 
 
 By default, the program process data in the naive mode. To run the program in the "MapReduce-like" mode, adding a "-d|D" flag to the command line, i.e.:<br><i>"java -cp src/TweetWordCount tweet_input/tweets tweet_output/ft1 <b>-d</b>"</i>
+
+<b>Technical details</b><br>
+1. Development environment: Mac OS X, JDK version 1.6.<br>
+2. Testing environment: Win 8, Unix, Max OS X. Memory 4-8 GB, file size KB~4GB level.<br>
