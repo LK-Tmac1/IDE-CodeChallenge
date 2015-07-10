@@ -54,15 +54,14 @@ public class IOManager {
 	 * @return the next line in the file being read
 	 */
 	public String readNextLine() {
-		String line = null;
 		try {
 			if (bfr != null) {
-				line = bfr.readLine();
+				return bfr.readLine();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return line;
+		return null;
 	}
 
 	public void closeBufferedReader() {
