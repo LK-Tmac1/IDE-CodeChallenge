@@ -61,20 +61,16 @@ public class RunningMedian {
 				median = leftMaxHeap.peek();
 			}
 		} else {
-			if (rightMinHeap.size() > leftMaxHeap.size()) {
-				if (val > median) {
+			if (val > median) {
+				if (leftMaxHeap.size() < rightMinHeap.size()) {
 					leftMaxHeap.add(rightMinHeap.poll());
-					rightMinHeap.add(val);
-				} else {
-					leftMaxHeap.add(val);
 				}
+				rightMinHeap.add(val);
 			} else {
-				if (val > median) {
+				if (leftMaxHeap.size() > rightMinHeap.size()) {
 					rightMinHeap.add(leftMaxHeap.poll());
-					leftMaxHeap.add(val);
-				} else {
-					rightMinHeap.add(val);
 				}
+				leftMaxHeap.add(val);
 			}
 			median = (rightMinHeap.peek() + leftMaxHeap.peek()) / 2;
 		}
