@@ -47,6 +47,9 @@ public class RunningMedian {
 	 * <p>
 	 * Time complexity O(logn) because of heap operations, and space complexity
 	 * O(n), assuming that there are n elements in the two heaps in total.
+	 * <p>
+	 * The key here is that should compare the new value and the current median
+	 * before putting the new value into the corresponding queue.
 	 * 
 	 * @param val
 	 *            The new value encountered.
