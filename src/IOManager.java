@@ -8,7 +8,8 @@ import java.io.IOException;
 
 /**
  * An object that encapsulates necessary data structures and methods for I/O
- * operations. Each instance will have a buffered reader and a buffered writer.
+ * operations. Each instance will have a buffered reader and a buffered writer,
+ * for efficiency purposes.
  * 
  * @author Kun
  *
