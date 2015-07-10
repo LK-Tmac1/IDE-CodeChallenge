@@ -19,4 +19,4 @@ Step 1 and 2 together is like the Map phase in MapReduce, as the input file is s
 The tradeoff is that, generating temporary files and merging them will cost more time. For example, when data is small, the two approaches are same in running time, but for a input data that is not too large, say a ~4GB input file, the naive method that reads all data in memory at once took roughly 50 seconds, whereas in the same machine, the second approach took 70 seconds. For really large data, the performance difference has not been compared yet.
 
 
-To run the program in the "Naive" mode, adding a "-n|N" flag to the command line, i.e.:<br><i>"java -cp src/TweetWordCount tweet_input/tweets tweet_output/ft1 <b>-n</b>"</i>
+By default, the program process data in the naive mode. To run the program in the "MapReduce-like" mode, adding a "-d|D" flag to the command line, i.e.:<br><i>"java -cp src/TweetWordCount tweet_input/tweets tweet_output/ft1 <b>-d</b>"</i>
