@@ -23,4 +23,4 @@ By default, the program process data in the naive mode. To run the program in th
 
 <b>Technical details</b><br>
 1. Development environment: Mac OS X, JDK version 1.6.<br>
-2. Testing environment: Win 8, Unix, Max OS X. Memory 4-8 GB, file size KB~4GB level.<br>
+2. Testing environment: Win 8, Linux, Max OS X. Memory 4-8 GB, file size KB~4GB level.<br>
