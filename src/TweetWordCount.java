@@ -23,7 +23,7 @@ public class TweetWordCount {
 	private static final int MAX_HASHFILE = 100;
 
 	/**
-	 * Used to sort and word-count pair based on the word key.
+	 * Used to store and sort word-count pair based on the word key.
 	 */
 	private TreeMap<String, Integer> wcMap;
 
@@ -66,7 +66,7 @@ public class TweetWordCount {
 	 * A naive procedure for processing small amount of data that can be fit in
 	 * memory.
 	 * <p>
-	 * The idea is straightforward, i.e. use a hash map to store and update the
+	 * The idea is straightforward, i.e. use a sorted map to store, sort and update the
 	 * word-count pair.
 	 */
 	public static void procedureWordCountNaive(String input, String output) {
